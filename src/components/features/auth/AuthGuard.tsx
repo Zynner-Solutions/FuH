@@ -5,7 +5,7 @@ import { useAuthStore } from "@/lib/store/AuthStore";
 import { useRouter, usePathname } from "next/navigation";
 
 const publicRoutes = ["/login", "/register"];
-const authRequiredRoutes = ["/profile"];
+const authRequiredRoutes = ["/profile", "/dashboard"];
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuthStore();

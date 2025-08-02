@@ -10,14 +10,18 @@ export default function LandingHero() {
           decisiones inteligentes y ahorrar mas cada dia.
         </p>
         <div className="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
-          <button className="rounded-lg bg-[#7c3aed] px-6 py-3 font-medium text-white shadow-lg hover:bg-[#6928d9] transition-all">
+          <a
+            href="/home"
+            className="rounded-lg bg-[#7c3aed] px-6 py-3 font-medium text-white shadow-lg hover:bg-[#6928d9] transition-all text-center"
+          >
             Comenzar ahora
-            <a href="/home" />
-          </button>
-          <button className="rounded-lg border-2 border-[#7c3aed] px-6 py-3 font-medium text-[#7c3aed] hover:bg-[#f7f3ff] transition-all">
+          </a>
+          <a
+            href="/faq"
+            className="rounded-lg border-2 border-[#7c3aed] px-6 py-3 font-medium text-[#7c3aed] hover:bg-[#f7f3ff] transition-all text-center"
+          >
             Saber más
-            <a href="/faq" />
-          </button>
+          </a>
         </div>
       </div>
     </div>

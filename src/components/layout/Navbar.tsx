@@ -54,7 +54,7 @@ export default function Navbar() {
                 <span>Inicio</span>
               </Link>
               <Link
-                href="/home"
+                href="/dashboard"
                 className="flex items-center space-x-2 text-purple-700 hover:text-purple-800 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
               >
                 <LayoutDashboard className="w-4 h-4" />
@@ -168,6 +168,13 @@ export default function Navbar() {
             >
               <Home className="w-5 h-5" />
               <span>Inicio</span>
+            </Link>
+            <Link
+              href="/dashboard"
+              className="flex items-center space-x-3 text-purple-700 hover:text-purple-800 hover:bg-purple-100 px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+            >
+              <LayoutDashboard className="w-5 h-5" />
+              <span>Dashboard</span>
             </Link>
             <Link
               href={mounted && isAuthenticated ? "/profile" : "/login"}

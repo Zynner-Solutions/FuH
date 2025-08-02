@@ -29,7 +29,7 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="/home"
+                  href="/dashboard"
                   className="text-[#6928d9] hover:text-[#491d95] transition-colors"
                 >
                   Dashboard

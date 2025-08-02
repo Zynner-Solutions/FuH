@@ -21,7 +21,7 @@ export default function Footer() {
             <ul className="space-y-2">
               <li>
                 <a
-                  href="/home"
+                  href="/"
                   className="text-[#6928d9] hover:text-[#491d95] transition-colors"
                 >
                   Inicio
@@ -29,10 +29,10 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="/"
+                  href="/home"
                   className="text-[#6928d9] hover:text-[#491d95] transition-colors"
                 >
-                  Landing
+                  Dashboard
                 </a>
               </li>
               <li>

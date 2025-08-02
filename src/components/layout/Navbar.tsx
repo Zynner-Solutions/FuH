@@ -11,6 +11,7 @@ import {
   UserPlus,
   LogIn,
   LogOut,
+  LayoutDashboard,
 } from "lucide-react";
 import { useAuthStore } from "@/lib/store/AuthStore";
 import { useRouter } from "next/navigation";
@@ -46,11 +47,18 @@ export default function Navbar() {
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-8">
               <Link
-                href="/home"
+                href="/"
                 className="flex items-center space-x-2 text-purple-700 hover:text-purple-800 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
               >
                 <Home className="w-4 h-4" />
                 <span>Inicio</span>
+              </Link>
+              <Link
+                href="/home"
+                className="flex items-center space-x-2 text-purple-700 hover:text-purple-800 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                <span>Dashboard</span>
               </Link>
               <Link
                 href={mounted && isAuthenticated ? "/profile" : "/login"}

@@ -11,7 +11,7 @@ export default function LandingHero() {
         </p>
         <div className="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
           <a
-            href="/home"
+            href="/dashboard"
             className="rounded-lg bg-[#7c3aed] px-6 py-3 font-medium text-white shadow-lg hover:bg-[#6928d9] transition-all text-center"
           >
             Comenzar ahora

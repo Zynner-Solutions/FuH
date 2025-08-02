@@ -3,9 +3,9 @@ import React from "react";
 
 export default function Footer() {
   return (
-    <footer className="w-full h-[40vh] bg-gradient-to-b from-[#f7f3ff] to-[#e5d6fe]">
-      <div className="container mx-auto h-full flex flex-col justify-between p-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+    <footer className="w-full bg-gradient-to-b from-[#f7f3ff] to-[#e5d6fe] pt-8 pb-4">
+      <div className="container mx-auto flex flex-col justify-between px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3 mt-4">
           <div className="flex flex-col">
             <h3 className="text-xl font-bold text-[#2f1065] mb-4">
               Sobre nosotros
@@ -74,7 +74,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-[#d0b5fd] mt-auto">
+        <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-[#d0b5fd] mt-8 gap-4">
           <div className="mb-4 md:mb-0">
             <p className="text-[#491d95] text-sm">
               El equipo detrás de esto, y hecho con mucho amor{" "}

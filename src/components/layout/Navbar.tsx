@@ -38,7 +38,7 @@ export default function Navbar() {
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">FurH</span>
+                <span className="text-white font-bold text-sm">Zynee</span>
               </div>
             </div>
           </div>

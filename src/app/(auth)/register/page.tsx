@@ -22,7 +22,7 @@ export default function RegisterPage() {
 
       <div className="mt-8 text-center">
         <p className="text-xs text-[#491d95]">
-          © 2025 FinanzApp. Todos los derechos reservados.
+          © 2025 Zynee. Todos los derechos reservados.
         </p>
       </div>
     </div>

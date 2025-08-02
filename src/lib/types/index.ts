@@ -52,3 +52,45 @@ export interface UserProfile {
   alias: string;
   avatar_url: string | null;
 }
+
+export interface ProfileUpdateData {
+  alias?: string;
+  password?: string;
+  avatarUrl?: string;
+}
+
+export interface ProfileUpdateResponse {
+  user: UserProfile;
+  message: string;
+}
+
+export interface ExpenseData {
+  name: string;
+  amount: number;
+  category: string;
+  date?: string;
+  notes?: string;
+  is_recurring?: boolean;
+}
+
+export interface Expense {
+  id: string;
+  name: string;
+  amount: number;
+  category: string;
+  date: string;
+  notes: string | null;
+  is_recurring: boolean;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ExpenseResponse {
+  message: string;
+  expense: Expense;
+}
+
+export interface ExpensesListResponse {
+  expenses: Expense[];
+}

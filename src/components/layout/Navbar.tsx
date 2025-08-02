@@ -46,7 +46,7 @@ export default function Navbar() {
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-8">
               <Link
-                href="/"
+                href="/home"
                 className="flex items-center space-x-2 text-purple-700 hover:text-purple-800 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
               >
                 <Home className="w-4 h-4" />

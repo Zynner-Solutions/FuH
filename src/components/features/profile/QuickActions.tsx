@@ -1,8 +1,10 @@
 "use client";
 
 import { Settings, Download, Bell, Lock } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function QuickActions() {
+  const router = useRouter();
   const actions = [
     {
       label: "Configuración",
@@ -36,6 +38,14 @@ export default function QuickActions() {
         {actions.map((action) => (
           <button
             key={action.label}
+            onClick={() => {
+              if (action.label === "Configuración") {
+                const event = new CustomEvent("toggleEditMode", {
+                  detail: { editMode: true },
+                });
+                window.dispatchEvent(event);
+              }
+            }}
             className="flex items-center p-4 border border-gray-200 rounded-lg hover:border-purple-300 hover:shadow-sm transition-all text-left"
           >
             <div className="rounded-full p-2 bg-purple-100 text-purple-600 mr-4">

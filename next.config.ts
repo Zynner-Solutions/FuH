@@ -1,6 +1,13 @@
-import type { NextConfig } from "next";
+// next.config.js
 
-const nextConfig: NextConfig = {
+const withPWA = require("next-pwa")({
+  dest: "public",
+  register: true,
+  skipWaiting: true,
+});
+
+const nextConfig = withPWA({
+  reactStrictMode: true,
   images: {
     unoptimized: true,
     remotePatterns: [
@@ -16,6 +23,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-};
+});
 
-export default nextConfig;
+module.exports = nextConfig;

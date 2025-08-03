@@ -16,6 +16,7 @@ import {
 import { useAuthStore } from "@/lib/store/AuthStore";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -39,7 +40,12 @@ export default function Navbar() {
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">Zynee</span>
+                <Image
+                  src="/brand-logo.png"
+                  alt="Zynee Logo"
+                  width={70}
+                  height={70}
+                />
               </div>
             </div>
           </div>

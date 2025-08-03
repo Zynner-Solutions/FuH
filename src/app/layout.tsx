@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Background from "@/components/layout/background";
@@ -20,6 +20,11 @@ export const metadata: Metadata = {
   title: "Zynee",
   description:
     "Plataforma para gestionar tus hábitos, gastos y metas diarias de forma sencilla, visual y segura. Organiza tu vida, analiza tus tendencias y mejora cada día.",
+  manifest: "/manifest.json",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#7c3aed",
 };
 
 export default function RootLayout({

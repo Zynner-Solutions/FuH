@@ -1,39 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useNotification } from "@/components/ui/notifications/useNotification";
 import { ApiClient } from "@/lib/api/ApiClient";
-import { Expense } from "@/lib/types";
 import { Trash2, Edit, RefreshCw } from "lucide-react";
+import { useExpenses } from "@/lib/hooks/useExpenses";
+import { ApiCache } from "@/lib/cache/ApiCache";
 
 const ExpensesList = () => {
   const { success, error: notifyError, confirm } = useNotification();
-  const [expenses, setExpenses] = useState<Expense[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const loadExpenses = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await ApiClient.getExpenses();
-      setExpenses(response.expenses);
-    } catch (error) {
-      setError((error as Error).message || "Error al cargar los gastos");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadExpenses();
-  }, []);
+  const {
+    expenses,
+    isLoading: loading,
+    error,
+    mutate: refreshExpenses,
+  } = useExpenses();
 
   const handleDelete = (id: string) => {
     confirm("¿Estás seguro de que deseas eliminar este gasto?", async () => {
       try {
         await ApiClient.deleteExpense(id);
-        loadExpenses();
+        await ApiCache.refreshExpenses();
         success("Gasto eliminado correctamente");
       } catch (err) {
         notifyError((err as Error).message || "Error al eliminar el gasto");
@@ -81,9 +67,9 @@ const ExpensesList = () => {
   if (error) {
     return (
       <div className="bg-red-50 border border-red-200 text-red-600 rounded-md p-4 mb-4">
-        {error}
+        {error.message || "Error al cargar los gastos"}
         <button
-          onClick={loadExpenses}
+          onClick={() => refreshExpenses()}
           className="ml-2 text-[#7c3aed] hover:text-[#6928d9] underline"
         >
           Reintentar
@@ -108,7 +94,7 @@ const ExpensesList = () => {
       <div className="flex justify-between items-center p-4 border-b border-[#d0b5fd]">
         <h2 className="text-xl font-bold text-[#2f1065]">Gastos recientes</h2>
         <button
-          onClick={loadExpenses}
+          onClick={() => ApiCache.refreshExpenses()}
           className="flex items-center text-sm text-[#7c3aed] hover:text-[#6928d9] transition-colors"
         >
           <RefreshCw className="w-4 h-4 mr-1" />

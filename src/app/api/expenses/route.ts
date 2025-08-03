@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { JWTService } from "@/lib/utils/jwt";
+import { revalidateTag } from "next/cache";
 
 export async function GET(request: NextRequest) {
   try {
@@ -100,6 +101,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    revalidateTag("expenses");
+
     return NextResponse.json({
       message: "Gasto creado exitosamente",
       expense,
@@ -171,6 +174,8 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
+    revalidateTag("expenses");
+
     return NextResponse.json({
       message: "Gasto actualizado exitosamente",
       expense,
@@ -224,6 +229,8 @@ export async function DELETE(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    revalidateTag("expenses");
 
     return NextResponse.json({
       message: "Gasto eliminado exitosamente",

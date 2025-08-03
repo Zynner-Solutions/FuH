@@ -104,42 +104,27 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { format, parseISO, isValid, isSameDay } from "date-fns";
 import { es } from "date-fns/locale";
-import { ApiClient } from "@/lib/api/ApiClient";
 import { Expense } from "@/lib/types";
+import { useExpenses } from "@/lib/hooks/useExpenses";
 
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 export default function ExpensesCalendar() {
-  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const { expenses, isLoading: loading, error } = useExpenses();
   const [selectedDate, setSelectedDate] = useState<Value>(new Date());
   const [selectedExpenses, setSelectedExpenses] = useState<Expense[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("todas");
   const [categories, setCategories] = useState<string[]>([]);
 
   useEffect(() => {
-    const loadExpenses = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const response = await ApiClient.getExpenses();
-        setExpenses(response.expenses);
-
-        const uniqueCategories = Array.from(
-          new Set(response.expenses.map((expense: Expense) => expense.category))
-        ) as string[];
-        setCategories(uniqueCategories);
-      } catch (error) {
-        setError((error as Error).message || "Error al cargar gastos");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadExpenses();
-  }, []);
+    if (expenses.length > 0) {
+      const uniqueCategories = Array.from(
+        new Set(expenses.map((expense: Expense) => expense.category))
+      ) as string[];
+      setCategories(uniqueCategories);
+    }
+  }, [expenses]);
 
   useEffect(() => {
     if (selectedDate instanceof Date) {
@@ -226,7 +211,7 @@ export default function ExpensesCalendar() {
   if (error) {
     return (
       <div className="bg-red-50 border border-red-200 text-red-600 rounded-md p-4">
-        {error}
+        {error.message || "Error al cargar los datos"}
       </div>
     );
   }

@@ -1,30 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { ApiClient } from "@/lib/api/ApiClient";
-import { Expense } from "@/lib/types";
+import { useExpenses } from "@/lib/hooks/useExpenses";
 
 export default function ExpensesStats() {
-  const [expenses, setExpenses] = useState<Expense[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadExpenses = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const response = await ApiClient.getExpenses();
-        setExpenses(response.expenses);
-      } catch (error) {
-        setError((error as Error).message || "Error al cargar estadísticas");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadExpenses();
-  }, []);
+  const { expenses, isLoading: loading, error } = useExpenses();
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("es-AR", {
@@ -73,7 +52,7 @@ export default function ExpensesStats() {
   if (error) {
     return (
       <div className="bg-red-50 border border-red-200 text-red-600 rounded-md p-4">
-        {error}
+        {error.message || "Error al cargar estadísticas"}
       </div>
     );
   }

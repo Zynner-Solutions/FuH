@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ApiClient } from "@/lib/api/ApiClient";
-import { Expense } from "@/lib/types";
 import {
   format,
   parseISO,
@@ -10,11 +8,11 @@ import {
   endOfMonth,
   isWithinInterval,
 } from "date-fns";
+import { useExpenses } from "@/lib/hooks/useExpenses";
+import { ApiCache } from "@/lib/cache/ApiCache";
 
 export default function ExpensesMetrics() {
-  const [expenses, setExpenses] = useState<Expense[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { expenses, isLoading: loading, error } = useExpenses();
   const [metrics, setMetrics] = useState({
     total: 0,
     monthlyTotal: 0,
@@ -25,25 +23,6 @@ export default function ExpensesMetrics() {
       name: "",
     },
   });
-
-  useEffect(() => {
-    const loadExpenses = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const response = await ApiClient.getExpenses();
-        setExpenses(response.expenses);
-      } catch (error) {
-        setError(
-          (error as Error).message || "Error al cargar datos para métricas"
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadExpenses();
-  }, []);
 
   useEffect(() => {
     if (expenses.length > 0) {
@@ -106,7 +85,7 @@ export default function ExpensesMetrics() {
   if (error) {
     return (
       <div className="bg-red-50 border border-red-200 text-red-600 rounded-md p-4 text-sm">
-        {error}
+        {error.message || "Error al cargar los datos"}
       </div>
     );
   }
@@ -114,7 +93,16 @@ export default function ExpensesMetrics() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <div className="bg-white rounded-xl shadow-sm p-6 border border-[#d0b5fd]">
-        <p className="text-sm text-[#491d95] mb-1">Total acumulado</p>
+        <div className="flex justify-between items-start mb-2">
+          <p className="text-sm text-[#491d95]">Total acumulado</p>
+          <button
+            onClick={() => ApiCache.refreshExpenses()}
+            className="text-xs text-[#7c3aed] hover:text-[#6928d9]"
+            title="Actualizar datos"
+          >
+            ↻
+          </button>
+        </div>
         <p className="text-2xl font-bold text-[#2f1065]">
           {new Intl.NumberFormat("es-AR", {
             style: "currency",

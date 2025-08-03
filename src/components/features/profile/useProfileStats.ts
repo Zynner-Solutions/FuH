@@ -1,9 +1,10 @@
-import { ApiClient } from "@/lib/api/ApiClient";
 import { useAuthStore } from "@/lib/store/AuthStore";
 import { useEffect, useState } from "react";
+import { useExpenses } from "@/lib/hooks/useExpenses";
 
 export function useProfileStats() {
   const { user } = useAuthStore();
+  const { expenses } = useExpenses();
   const [loading, setLoading] = useState(true);
   const [expenseCount, setExpenseCount] = useState(0);
   const [mostUsedCategory, setMostUsedCategory] = useState("");
@@ -12,12 +13,11 @@ export function useProfileStats() {
   useEffect(() => {
     async function fetchStats() {
       if (!user) return;
-      const expensesRes = await ApiClient.getExpenses();
-      const expenses = expensesRes.expenses || [];
-      setExpenseCount(expenses.length);
+      setLoading(true);
+      setExpenseCount(expenses?.length || 0);
 
       const categoryCount: Record<string, number> = {};
-      expenses.forEach((e) => {
+      expenses?.forEach((e) => {
         categoryCount[e.category] = (categoryCount[e.category] || 0) + 1;
       });
       let most = "";

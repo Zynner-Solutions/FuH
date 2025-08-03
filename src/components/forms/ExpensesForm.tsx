@@ -2,7 +2,9 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useNotification } from "@/components/ui/notifications/useNotification";
-import { Formik, Form, Field, ErrorMessage, useFormikContext } from "formik";
+import { Formik, Form, Field, ErrorMessage, useFormikContext } from "formik";import * as Yup from "yup";
+import { ApiClient } from "@/lib/api/ApiClient";
+import { ApiCache } from "@/lib/cache/ApiCache";
 function CustomDropdown({
   value,
   onChange,
@@ -102,8 +104,6 @@ function CustomDropdown({
     </div>
   );
 }
-import * as Yup from "yup";
-import { ApiClient } from "@/lib/api/ApiClient";
 
 const ExpenseSchema = Yup.object().shape({
   name: Yup.string().required("El nombre del gasto es obligatorio"),
@@ -146,6 +146,8 @@ export default function ExpensesForm({ onSuccess }: ExpensesFormProps) {
 
       notifySuccess("¡Gasto registrado con éxito!");
       resetForm();
+
+      await ApiCache.refreshExpenses();
 
       if (onSuccess) onSuccess();
     } catch (error: any) {

@@ -3,7 +3,7 @@
 import { Suspense } from "react";
 import HomeContent from "@/components/features/home/HomeContent";
 
-export default function HomePage() {
+export default function Dashboard() {
   return (
     <Suspense
       fallback={

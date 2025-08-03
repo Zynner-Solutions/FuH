@@ -1,6 +1,105 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+function CustomDropdown({
+  value,
+  onChange,
+  options,
+  placeholder,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  options: { value: string; label: string }[];
+  placeholder: string;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+  const selectedOption = options.find((option) => option.value === value);
+  return (
+    <div ref={dropdownRef} className="relative">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full px-3 py-1 rounded-md border border-[#d0b5fd] focus:ring-2 focus:ring-[#7c3aed] focus:border-transparent outline-none transition-all duration-200 bg-[#f7f3ff] text-left flex items-center justify-between"
+      >
+        <span
+          className={`${
+            !selectedOption ? "text-gray-500" : "text-[#491d95] font-medium"
+          }`}
+        >
+          {selectedOption ? selectedOption.label : placeholder}
+        </span>
+        <svg
+          className={`w-5 h-5 text-[#7c3aed] transition-transform ${
+            isOpen ? "transform rotate-180" : ""
+          }`}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+      </button>
+      {isOpen && (
+        <div className="absolute z-10 w-full mt-1 bg-white border border-[#d0b5fd] rounded-lg shadow-lg overflow-hidden">
+          <div className="max-h-60 overflow-y-auto py-1">
+            {options.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => {
+                  onChange(option.value);
+                  setIsOpen(false);
+                }}
+                className={`w-full text-left px-4 py-2 hover:bg-[#f3e8ff] flex items-center justify-between ${
+                  value === option.value
+                    ? "bg-[#f3e8ff] text-[#7c3aed]"
+                    : "text-[#491d95]"
+                }`}
+              >
+                <span>{option.label}</span>
+                {value === option.value && (
+                  <svg
+                    className="w-4 h-4 text-[#7c3aed]"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { format, parseISO, isValid, isSameDay } from "date-fns";
@@ -29,9 +128,7 @@ export default function ExpensesCalendar() {
         setExpenses(response.expenses);
 
         const uniqueCategories = Array.from(
-          new Set(
-            response.expenses.map((expense: Expense) => expense.category)
-          )
+          new Set(response.expenses.map((expense: Expense) => expense.category))
         ) as string[];
         setCategories(uniqueCategories);
       } catch (error) {
@@ -71,7 +168,10 @@ export default function ExpensesCalendar() {
 
     if (dateExpenses.length === 0) return null;
 
-    const total = dateExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+    const total = dateExpenses.reduce(
+      (sum, expense) => sum + expense.amount,
+      0
+    );
 
     return (
       <div className="expense-indicator">
@@ -103,7 +203,10 @@ export default function ExpensesCalendar() {
 
     if (dateExpenses.length === 0) return "";
 
-    const total = dateExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+    const total = dateExpenses.reduce(
+      (sum, expense) => sum + expense.amount,
+      0
+    );
     let intensity = "bg-purple-100";
 
     if (total > 10000) intensity = "bg-purple-300";
@@ -134,19 +237,16 @@ export default function ExpensesCalendar() {
         <h2 className="text-xl font-bold text-[#2f1065]">
           Calendario de gastos
         </h2>
-        <div className="flex">
-          <select
+        <div className="flex w-56">
+          <CustomDropdown
             value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-3 py-1 bg-[#f7f3ff] text-[#491d95] rounded-md border border-[#d0b5fd]"
-          >
-            <option value="todas">Todas las categorías</option>
-            {categories.map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))}
-          </select>
+            onChange={setSelectedCategory}
+            options={[
+              { value: "todas", label: "Todas las categorías" },
+              ...categories.map((cat) => ({ value: cat, label: cat })),
+            ]}
+            placeholder="Filtrar por categoría"
+          />
         </div>
       </div>
 

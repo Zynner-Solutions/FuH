@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useNotification } from "@/components/ui/notifications/useNotification";
 import { ApiClient } from "@/lib/api/ApiClient";
 import { Expense } from "@/lib/types";
 import { Trash2, Edit, RefreshCw } from "lucide-react";
 
-export default function ExpensesList() {
+const ExpensesList = () => {
+  const { success, error: notifyError, confirm } = useNotification();
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -27,15 +29,16 @@ export default function ExpensesList() {
     loadExpenses();
   }, []);
 
-  const handleDelete = async (id: string) => {
-    if (confirm("¿Estás seguro de que deseas eliminar este gasto?")) {
+  const handleDelete = (id: string) => {
+    confirm("¿Estás seguro de que deseas eliminar este gasto?", async () => {
       try {
         await ApiClient.deleteExpense(id);
         loadExpenses();
-      } catch (error) {
-        setError((error as Error).message || "Error al eliminar el gasto");
+        success("Gasto eliminado correctamente");
+      } catch (err) {
+        notifyError((err as Error).message || "Error al eliminar el gasto");
       }
-    }
+    });
   };
 
   const formatDate = (dateString: string) => {
@@ -180,4 +183,6 @@ export default function ExpensesList() {
       </div>
     </div>
   );
-}
+};
+
+export default ExpensesList;

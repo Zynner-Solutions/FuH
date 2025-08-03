@@ -5,6 +5,7 @@ import Background from "@/components/layout/background";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import AuthGuard from "@/components/features/auth/AuthGuard";
+import SnackbarProvider from "@/components/providers/SnackbarProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,9 +39,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Background>
-          <Navbar />
-          <AuthGuard>{children}</AuthGuard>
-          <Footer />
+          <SnackbarProvider>
+            <Navbar />
+            <AuthGuard>{children}</AuthGuard>
+            <Footer />
+          </SnackbarProvider>
         </Background>
       </body>
     </html>

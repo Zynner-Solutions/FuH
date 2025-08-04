@@ -1,25 +1,29 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { UserProfile, ProfileUpdateData } from "@/lib/types";
+import { ProfileUpdateData } from "@/lib/types";
 import { Pencil, X, Check } from "lucide-react";
-import { useAuthStore } from "@/lib/store/AuthStore";
 import { ApiClient } from "@/lib/api/ApiClient";
 
-export default function ProfileInfo({ user }: { user: UserProfile }) {
+import { UserProfile } from "@/lib/types";
+type Props = { user: UserProfile };
+export default function ProfileInfo({ user }: Props) {
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
   const [alias, setAlias] = useState(user.alias);
   const [password, setPassword] = useState("");
   const [avatarUrl, setAvatarUrl] = useState(user.avatar_url || "");
   const [error, setError] = useState<string | null>(null);
-  const { setUser } = useAuthStore();
+
+  useEffect(() => {
+    setAlias(user.alias);
+    setAvatarUrl(user.avatar_url || "");
+  }, [user]);
 
   useEffect(() => {
     const handleToggleEditMode = (event: any) => {
       setEditMode(event.detail.editMode);
     };
-
     window.addEventListener("toggleEditMode", handleToggleEditMode);
     return () => {
       window.removeEventListener("toggleEditMode", handleToggleEditMode);
@@ -30,29 +34,21 @@ export default function ProfileInfo({ user }: { user: UserProfile }) {
     try {
       setLoading(true);
       setError(null);
-
       window.dispatchEvent(new CustomEvent("profileSave"));
-
       const updateData: ProfileUpdateData = {};
-
-      if (alias !== user.alias) {
+      if (user && alias !== user.alias) {
         updateData.alias = alias;
       }
-
       if (password) {
         updateData.password = password;
       }
-
       if (Object.keys(updateData).length > 0) {
         const response = await ApiClient.updateProfile(updateData);
-
-        setUser(response.user);
+        // setUser(response.user); // Eliminar porque setUser no está definido ni es necesario aquí
       }
-
       setEditMode(false);
       setPassword("");
     } catch (error) {
-      console.error("Error al actualizar perfil:", error);
       setError(
         error instanceof Error ? error.message : "Error al actualizar el perfil"
       );
@@ -63,11 +59,18 @@ export default function ProfileInfo({ user }: { user: UserProfile }) {
 
   const handleCancel = () => {
     window.dispatchEvent(new CustomEvent("profileCancel"));
-
-    setAlias(user.alias);
+    if (user) setAlias(user.alias);
     setPassword("");
     setEditMode(false);
   };
+
+  if (!user) {
+    return (
+      <div className="border border-gray-200 rounded-lg p-6 shadow-sm mb-8 text-center text-gray-500">
+        Cargando información del usuario...
+      </div>
+    );
+  }
 
   return (
     <div className="border border-gray-200 rounded-lg p-6 shadow-sm mb-8">
@@ -161,6 +164,33 @@ export default function ProfileInfo({ user }: { user: UserProfile }) {
               <p className="text-sm font-medium text-gray-500">ID de usuario</p>
               <p className="mt-1 text-gray-800 font-mono text-xs truncate">
                 {user.id}
+              </p>
+            </div>
+          )}
+
+          {!editMode && (
+            <div>
+              <p className="text-sm font-medium text-gray-500">
+                Fecha de Creación
+              </p>
+              <p className="mt-1 text-gray-800 font-mono text-xs truncate">
+                {user.created_at
+                  ? (() => {
+                      const date = new Date(user.created_at);
+                      if (isNaN(date.getTime())) {
+                        return "Fecha inválida";
+                      }
+                      return date.toLocaleString("es-ES", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: false,
+                        timeZone: "UTC",
+                      });
+                    })()
+                  : "No disponible"}
               </p>
             </div>
           )}

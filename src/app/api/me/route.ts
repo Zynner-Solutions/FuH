@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
 
     const { data: user } = await supabase
       .from("users")
-      .select("id, email, name, surname, alias, avatar_url")
+      .select("id, email, name, surname, alias, avatar_url, created_at")
       .eq("id", userId)
       .single();
 
@@ -52,7 +52,14 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ user });
+    const { data: expenses } = await supabase
+      .from("expenses")
+      .select(
+        "id, user_id, name, amount, category, date, notes, is_recurring, created_at, updated_at"
+      )
+      .eq("user_id", userId);
+
+    return NextResponse.json({ user, expenses });
   } catch (error) {
     console.error("Error al obtener usuario:", error);
     return NextResponse.json(
@@ -152,7 +159,7 @@ export async function PATCH(request: NextRequest) {
 
     const { data: updatedUser } = await supabase
       .from("users")
-      .select("id, email, name, surname, alias, avatar_url")
+      .select("id, email, name, surname, alias, avatar_url, created_at")
       .eq("id", userId)
       .single();
 

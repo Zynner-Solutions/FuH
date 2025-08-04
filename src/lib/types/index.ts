@@ -51,6 +51,7 @@ export interface UserProfile {
   surname: string;
   alias: string;
   avatar_url: string | null;
+  created_at: string;
 }
 
 export interface ProfileUpdateData {

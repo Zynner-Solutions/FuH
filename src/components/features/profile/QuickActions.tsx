@@ -1,10 +1,26 @@
 "use client";
 
-import { Settings, Download, Bell, Lock } from "lucide-react";
+import { Settings, Download, Bell, Building } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export default function QuickActions() {
+import { Expense } from "@/lib/types";
+type Props = { expenses: Expense[] };
+export default function QuickActions({ expenses }: Props) {
   const router = useRouter();
+  const expenseCount = expenses.length;
+  let mostUsedCategory = "-";
+  if (expenses.length > 0) {
+    const categoryCount: Record<string, number> = {};
+    expenses.forEach((e: Expense) => {
+      categoryCount[e.category] = (categoryCount[e.category] || 0) + 1;
+    });
+    const sortedCategories = Object.entries(categoryCount).sort(
+      (a, b) => b[1] - a[1]
+    );
+    if (sortedCategories.length > 0) {
+      mostUsedCategory = sortedCategories[0][0];
+    }
+  }
   const actions = [
     {
       label: "Configuración",
@@ -12,28 +28,26 @@ export default function QuickActions() {
       description: "Personaliza tu experiencia y preferencias",
     },
     {
-      label: "Privacidad",
-      icon: <Lock className="w-5 h-5" />,
-      description: "Gestiona la seguridad de tu cuenta",
+      label: "Organizaciones",
+      icon: <Building className="w-5 h-5" />,
+      description: "Crea y gestiona tus organizaciones",
     },
     {
       label: "Exportar datos",
       icon: <Download className="w-5 h-5" />,
-      description: "Descarga tus datos financieros",
+      description: `Descarga tus datos financieros. Gastos registrados: ${expenseCount}`,
     },
     {
       label: "Notificaciones",
       icon: <Bell className="w-5 h-5" />,
-      description: "Personaliza tus alertas",
+      description: `Categoría más usada: ${mostUsedCategory}`,
     },
   ];
-
   return (
     <div className="mb-8">
       <h2 className="text-xl font-semibold text-gray-800 mb-4">
         Acciones rápidas
       </h2>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {actions.map((action) => (
           <button

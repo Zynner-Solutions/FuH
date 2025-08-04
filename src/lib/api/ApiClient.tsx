@@ -9,6 +9,8 @@ import {
   ExpenseData,
   ExpenseResponse,
   ExpensesListResponse,
+  UserProfile,
+  Expense,
 } from "../types";
 import Cookies from "js-cookie";
 
@@ -63,10 +65,12 @@ export const ApiClient = {
     });
   },
 
-  async getCurrentUser(): Promise<LoginResponse["user"] | null> {
+  async getProfile(): Promise<{
+    user: UserProfile;
+    expenses: Expense[];
+  } | null> {
     try {
       const accessToken = Cookies.get("finanz_accessToken");
-
       const response = await fetch("/api/me", {
         method: "GET",
         headers: {
@@ -75,13 +79,11 @@ export const ApiClient = {
         },
         credentials: "include",
       });
-
       if (!response.ok) {
         return null;
       }
-
       const data = await response.json();
-      return data.user;
+      return { user: data.user, expenses: data.expenses };
     } catch (error) {
       return null;
     }

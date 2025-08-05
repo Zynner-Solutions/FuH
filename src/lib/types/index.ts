@@ -107,3 +107,15 @@ export interface Jar {
   createdAt: string;
   updatedAt?: string;
 }
+
+export interface Payment {
+  amount: number;
+  date: string;
+  notes?: string;
+}
+
+export interface Member {
+  nombre: string;
+  apellido: string;
+  payments: Payment[];
+}

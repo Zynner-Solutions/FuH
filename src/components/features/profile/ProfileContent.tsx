@@ -60,7 +60,7 @@ export default function ProfileContent() {
           <QuickActions expenses={expenses} onJarCreated={handleJarCreated} />
         </div>
         <div className="order-2 lg:order-1 lg:col-span-2 space-y-6">
-          <ProfileStats expenses={expenses} />
+          <ProfileStats expenses={expenses} jars={user.jars || []} />
           <ProfileInfo user={user} />
           <ProfileJars ref={profileJarsRef} />
         </div>

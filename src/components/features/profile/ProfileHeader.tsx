@@ -63,8 +63,8 @@ export default function ProfileHeader({ user }: { user: UserProfile }) {
   }, [editMode, tempAvatarUrl, user.avatar_url, setUser]);
 
   return (
-    <div className="w-full py-8 mb-6">
-      <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+    <div className="w-full py-6 sm:py-8 mb-6">
+      <div className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6 px-2 sm:px-0">
         {!editMode && user.avatar_url && !imageError ? (
           <div className="w-24 h-24 rounded-full overflow-hidden">
             <img

@@ -52,7 +52,7 @@ export default function QuickActions({ expenses }: Props) {
       <h2 className="text-xl font-semibold text-gray-800 mb-4">
         Acciones rápidas
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {actions.map((action) => (
           <button
             key={action.label}
@@ -78,8 +78,10 @@ export default function QuickActions({ expenses }: Props) {
           </button>
         ))}
         {showJarForm && (
-          <div className="col-span-2 mt-2">
-            <JarForm onSuccess={() => setShowJarForm(false)} />
+          <div className="col-span-1 sm:col-span-2 w-full mt-2">
+            <div className="w-full max-w-2xl mx-auto">
+              <JarForm onSuccess={() => setShowJarForm(false)} />
+            </div>
           </div>
         )}
       </div>

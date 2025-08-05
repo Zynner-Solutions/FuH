@@ -57,10 +57,10 @@ export default function ProfileJars() {
   };
 
   return (
-    <div className="w-full px-0 py-8">
+    <div className="w-full max-w-7xl mx-auto px-2 sm:px-4 py-8">
       <div
-        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6"
-        style={{ width: "100vw", maxWidth: "100vw" }}
+        className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
+        style={{ width: "100%" }}
       >
         {jars.map((jar) => {
           const progress = Math.min(100, (jar.saved / jar.target) * 100);
@@ -69,10 +69,8 @@ export default function ProfileJars() {
           return (
             <div
               key={jar.id}
-              className="group relative rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 min-w-0 flex flex-col"
+              className="group relative rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 min-w-[260px] max-w-md w-full flex flex-col"
               style={{
-                minWidth: 0,
-                width: "100%",
                 background: "linear-gradient(135deg, #ede9fe 0%, #f5f3ff 100%)",
               }}
             >

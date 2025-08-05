@@ -49,14 +49,14 @@ export default function JarForm({ onSuccess }: { onSuccess?: () => void }) {
   const [loading, setLoading] = useState(false);
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div className="w-full max-w-2xl mx-auto px-2 sm:px-4 md:px-6">
       <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
-        <div className="bg-gradient-to-r from-violet-100 to-purple-100 px-8 py-6">
-          <div className="flex items-center">
-            <div className="w-12 h-12 bg-white/40 rounded-xl flex items-center justify-center mr-4">
+        <div className="bg-gradient-to-r from-violet-100 to-purple-100 px-4 py-4 sm:px-6 sm:py-6">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start">
+            <div className="w-12 h-12 bg-white/40 rounded-xl flex items-center justify-center mb-3 sm:mb-0 sm:mr-4">
               <PiggyBank className="w-6 h-6 text-violet-400" />
             </div>
-            <div>
+            <div className="text-center sm:text-left">
               <h2 className="text-2xl font-bold text-violet-700">
                 Crear Nuevo Frasco
               </h2>
@@ -99,9 +99,9 @@ export default function JarForm({ onSuccess }: { onSuccess?: () => void }) {
           }}
         >
           {({ values, errors, touched }) => (
-            <Form className="p-8 space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="md:col-span-2">
+            <Form className="p-4 sm:p-6 md:p-8 space-y-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6">
+                <div className="col-span-1 md:col-span-2">
                   <label className="flex items-center text-sm font-semibold text-gray-700 mb-3">
                     <FileText className="w-4 h-4 mr-2 text-violet-600" />
                     Nombre del frasco
@@ -126,7 +126,7 @@ export default function JarForm({ onSuccess }: { onSuccess?: () => void }) {
                   />
                 </div>
 
-                <div className="md:col-span-2">
+                <div className="col-span-1 md:col-span-2">
                   <label className="flex items-center text-sm font-semibold text-gray-700 mb-3">
                     <Sparkles className="w-4 h-4 mr-2 text-violet-600" />
                     Descripción
@@ -152,7 +152,7 @@ export default function JarForm({ onSuccess }: { onSuccess?: () => void }) {
                   />
                 </div>
 
-                <div>
+                <div className="col-span-1">
                   <label className="flex items-center text-sm font-semibold text-gray-700 mb-3">
                     <Target className="w-4 h-4 mr-2 text-violet-600" />
                     Meta de ahorro
@@ -183,7 +183,7 @@ export default function JarForm({ onSuccess }: { onSuccess?: () => void }) {
                   />
                 </div>
 
-                <div>
+                <div className="col-span-1">
                   <label className="flex items-center text-sm font-semibold text-gray-700 mb-3">
                     <PiggyBank className="w-4 h-4 mr-2 text-violet-600" />
                     Ahorro inicial
@@ -219,7 +219,7 @@ export default function JarForm({ onSuccess }: { onSuccess?: () => void }) {
                 values.saved &&
                 Number(values.target) > 0 &&
                 Number(values.saved) >= 0 && (
-                  <div className="bg-gradient-to-r from-violet-50 to-purple-50 rounded-xl p-4 border border-violet-100">
+                  <div className="bg-gradient-to-r from-violet-50 to-purple-50 rounded-xl p-3 sm:p-4 border border-violet-100">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium text-gray-700">
                         Progreso inicial
@@ -249,7 +249,7 @@ export default function JarForm({ onSuccess }: { onSuccess?: () => void }) {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-4 px-6 bg-gradient-to-r from-violet-200 to-purple-300 text-violet-800 font-semibold rounded-xl hover:shadow-lg transition-all duration-200 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center"
+                className="w-full py-3 px-4 sm:py-4 sm:px-6 bg-gradient-to-r from-violet-200 to-purple-300 text-violet-800 font-semibold rounded-xl hover:shadow-lg transition-all duration-200 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center"
               >
                 {loading ? (
                   <>

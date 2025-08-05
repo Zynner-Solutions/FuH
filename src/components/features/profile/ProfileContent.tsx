@@ -45,16 +45,16 @@ export default function ProfileContent() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 min-h-screen">
+    <div className="max-w-6xl mx-auto px-2 sm:px-4 py-6 min-h-screen">
       <ProfileHeader user={user} />
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-6">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div className="order-1 lg:order-2 w-full lg:col-span-1">
+          <QuickActions expenses={expenses} />
+        </div>
+        <div className="order-2 lg:order-1 lg:col-span-2 space-y-6">
           <ProfileStats expenses={expenses} />
           <ProfileInfo user={user} />
           <ProfileJars />
-        </div>
-        <div>
-          <QuickActions expenses={expenses} />
         </div>
       </div>
     </div>

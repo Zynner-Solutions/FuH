@@ -73,8 +73,8 @@ export default function ProfileInfo({ user }: Props) {
   }
 
   return (
-    <div className="border border-gray-200 rounded-lg p-6 shadow-sm mb-8">
-      <div className="flex justify-between items-center mb-4">
+    <div className="border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm mb-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
         <h2 className="text-xl font-semibold text-gray-800">
           Información personal
         </h2>
@@ -109,7 +109,7 @@ export default function ProfileInfo({ user }: Props) {
       )}
 
       <div className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+        <div className="grid grid-cols-1 gap-y-3 md:grid-cols-2 md:gap-x-6">
           <div>
             <p className="text-sm font-medium text-gray-500">Nombre completo</p>
             <p className="mt-1 text-gray-800">

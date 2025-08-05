@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
 
     const { data: user } = await supabase
       .from("users")
-      .select("id, email, name, surname, alias, avatar_url")
+      .select("id, email, name, surname, alias, avatar_url, created_at, jars")
       .eq("id", userId)
       .single();
 
@@ -51,8 +51,18 @@ export async function GET(request: NextRequest) {
         { status: 404 }
       );
     }
+    if (!user.jars) {
+      user.jars = [];
+    }
 
-    return NextResponse.json({ user });
+    const { data: expenses } = await supabase
+      .from("expenses")
+      .select(
+        "id, user_id, name, amount, category, date, notes, is_recurring, created_at, updated_at"
+      )
+      .eq("user_id", userId);
+
+    return NextResponse.json({ user, expenses });
   } catch (error) {
     console.error("Error al obtener usuario:", error);
     return NextResponse.json(
@@ -98,7 +108,7 @@ export async function PATCH(request: NextRequest) {
 
     const userId = decodedToken.id;
     const requestData = await request.json();
-    const { alias, password, avatarUrl } = requestData;
+    const { alias, password, avatarUrl, addJar, updateJar } = requestData;
 
     const updates: Record<string, any> = {};
     const authUpdates: Record<string, any> = {};
@@ -109,6 +119,28 @@ export async function PATCH(request: NextRequest) {
 
     if (avatarUrl) {
       updates.avatar_url = avatarUrl;
+    }
+
+    if (addJar) {
+      const { data: user } = await supabase
+        .from("users")
+        .select("jars")
+        .eq("id", userId)
+        .single();
+      let jars = Array.isArray(user?.jars) ? user.jars : [];
+      jars = [...jars, addJar];
+      updates.jars = jars;
+    }
+
+    if (updateJar) {
+      const { data: user } = await supabase
+        .from("users")
+        .select("jars")
+        .eq("id", userId)
+        .single();
+      let jars = Array.isArray(user?.jars) ? user.jars : [];
+      jars = jars.map((jar) => (jar.id === updateJar.id ? updateJar : jar));
+      updates.jars = jars;
     }
 
     if (password) {
@@ -152,7 +184,7 @@ export async function PATCH(request: NextRequest) {
 
     const { data: updatedUser } = await supabase
       .from("users")
-      .select("id, email, name, surname, alias, avatar_url")
+      .select("id, email, name, surname, alias, avatar_url, created_at, jars")
       .eq("id", userId)
       .single();
 

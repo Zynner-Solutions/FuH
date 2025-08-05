@@ -63,8 +63,8 @@ export default function ProfileHeader({ user }: { user: UserProfile }) {
   }, [editMode, tempAvatarUrl, user.avatar_url, setUser]);
 
   return (
-    <div className="w-full py-8 mb-6">
-      <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+    <div className="w-full py-6 sm:py-8 mb-6">
+      <div className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6 px-2 sm:px-0">
         {!editMode && user.avatar_url && !imageError ? (
           <div className="w-24 h-24 rounded-full overflow-hidden">
             <img
@@ -111,7 +111,17 @@ export default function ProfileHeader({ user }: { user: UserProfile }) {
           <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
             {user.name} {user.surname}
           </h1>
-          <p className="text-gray-600 text-lg mt-1">@{user.alias}</p>
+          <p className="text-lg mt-1 font-bold">
+            <span
+              className="bg-clip-text text-transparent"
+              style={{
+                backgroundImage:
+                  "linear-gradient(90deg, var(--color-electric-violet-500), var(--color-electric-violet-700), var(--color-electric-violet-900))",
+              }}
+            >
+              @{user.alias}
+            </span>
+          </p>
           <p className="text-gray-500 mt-2">{user.email}</p>
         </div>
       </div>

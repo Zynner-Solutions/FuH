@@ -1,25 +1,43 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/lib/store/AuthStore";
+
+import { ApiClient } from "@/lib/api/ApiClient";
 import ProfileHeader from "./ProfileHeader";
 import ProfileStats from "./ProfileStats";
 import ProfileInfo from "./ProfileInfo";
 import QuickActions from "./QuickActions";
+import ProfileJars from "./ProfileJars";
 
+import { UserProfile, Expense } from "@/lib/types";
 export default function ProfileContent() {
-  const { user, isAuthenticated } = useAuthStore();
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
   const router = useRouter();
+  const profileJarsRef = useRef<{ fetchJars: () => void } | null>(null);
 
-  useEffect(() => {
-    if (!isAuthenticated) {
+  const fetchProfile = async () => {
+    const data = await ApiClient.getProfile();
+    if (!data) {
       router.push("/login");
       return;
     }
+    setUser(data.user);
+    setExpenses(data.expenses);
     setLoading(false);
-  }, [isAuthenticated, router]);
+  };
+
+  const handleJarCreated = () => {
+    if (profileJarsRef.current) {
+      profileJarsRef.current.fetchJars();
+    }
+  };
+
+  useEffect(() => {
+    fetchProfile();
+  }, [router]);
 
   if (loading) {
     return (
@@ -35,17 +53,16 @@ export default function ProfileContent() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 min-h-screen">
+    <div className="max-w-6xl mx-auto px-2 sm:px-4 py-6 min-h-screen">
       <ProfileHeader user={user} />
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-6">
-          <ProfileStats />
-          <ProfileInfo user={user} />
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div className="order-1 lg:order-2 w-full lg:col-span-1">
+          <QuickActions expenses={expenses} onJarCreated={handleJarCreated} />
         </div>
-
-        <div>
-          <QuickActions />
+        <div className="order-2 lg:order-1 lg:col-span-2 space-y-6">
+          <ProfileStats expenses={expenses} />
+          <ProfileInfo user={user} />
+          <ProfileJars ref={profileJarsRef} />
         </div>
       </div>
     </div>

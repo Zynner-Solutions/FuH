@@ -9,6 +9,9 @@ import {
   ExpenseData,
   ExpenseResponse,
   ExpensesListResponse,
+  UserProfile,
+  Expense,
+  Jar,
 } from "../types";
 import Cookies from "js-cookie";
 
@@ -63,10 +66,12 @@ export const ApiClient = {
     });
   },
 
-  async getCurrentUser(): Promise<LoginResponse["user"] | null> {
+  async getProfile(): Promise<{
+    user: UserProfile;
+    expenses: Expense[];
+  } | null> {
     try {
       const accessToken = Cookies.get("finanz_accessToken");
-
       const response = await fetch("/api/me", {
         method: "GET",
         headers: {
@@ -75,13 +80,11 @@ export const ApiClient = {
         },
         credentials: "include",
       });
-
       if (!response.ok) {
         return null;
       }
-
       const data = await response.json();
-      return data.user;
+      return { user: data.user, expenses: data.expenses };
     } catch (error) {
       return null;
     }
@@ -205,5 +208,54 @@ export const ApiClient = {
     }
 
     return responseData as { message: string };
+  },
+
+  async updateJar(jar: Jar): Promise<{ user: UserProfile }> {
+    const accessToken = Cookies.get("finanz_accessToken");
+
+    const response = await fetch("/api/me", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: accessToken ? `Bearer ${accessToken}` : "",
+      },
+      body: JSON.stringify({ updateJar: jar }),
+      credentials: "include",
+    });
+
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        (responseData as ApiErrorResponse).error ||
+          "Error al actualizar el frasco"
+      );
+    }
+
+    return responseData as { user: UserProfile };
+  },
+
+  async addJar(jar: Jar): Promise<{ user: UserProfile }> {
+    const accessToken = Cookies.get("finanz_accessToken");
+
+    const response = await fetch("/api/me", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: accessToken ? `Bearer ${accessToken}` : "",
+      },
+      body: JSON.stringify({ addJar: jar }),
+      credentials: "include",
+    });
+
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        (responseData as ApiErrorResponse).error || "Error al crear el frasco"
+      );
+    }
+
+    return responseData as { user: UserProfile };
   },
 };

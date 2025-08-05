@@ -16,6 +16,27 @@ import {
 import Cookies from "js-cookie";
 
 export const ApiClient = {
+  async getOrganizationBySlug(slug: string): Promise<{ organization: any }> {
+    const accessToken =
+      Cookies.get("finanz_accessToken") || Cookies.get("finanz_accessToken");
+
+    const response = await fetch(`/api/organizations/${slug}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: accessToken ? `Bearer ${accessToken}` : "",
+      },
+    });
+
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        (responseData as ApiErrorResponse).error || "Organización no encontrada"
+      );
+    }
+    return responseData as { organization: any };
+  },
   async login(data: LoginData): Promise<LoginResponse> {
     const response = await fetch("/api/login", {
       method: "POST",
@@ -257,5 +278,164 @@ export const ApiClient = {
     }
 
     return responseData as { user: UserProfile };
+  },
+
+  async createOrganization(data: {
+    name: string;
+    description: string;
+    members?: any[];
+  }): Promise<{ organization: any }> {
+    const accessToken = Cookies.get("finanz_accessToken");
+    const response = await fetch("/api/organizations", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: accessToken ? `Bearer ${accessToken}` : "",
+      },
+      body: JSON.stringify(data),
+    });
+    const responseData = await response.json();
+    if (!response.ok) {
+      throw new Error(
+        (responseData as ApiErrorResponse).error ||
+          "Error al crear la organización"
+      );
+    }
+    return responseData as { organization: any };
+  },
+
+  async getOrganizations(): Promise<{ organizations: any[] }> {
+    const accessToken = Cookies.get("finanz_accessToken");
+    const response = await fetch("/api/organizations", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: accessToken ? `Bearer ${accessToken}` : "",
+      },
+    });
+    const responseData = await response.json();
+    if (!response.ok) {
+      throw new Error(
+        (responseData as ApiErrorResponse).error ||
+          "Error al obtener las organizaciones"
+      );
+    }
+    return responseData as { organizations: any[] };
+  },
+
+  async updateOrganization(data: {
+    id: string;
+    name: string;
+    description: string;
+    members?: any[];
+  }): Promise<{ organization: any }> {
+    const accessToken = Cookies.get("finanz_accessToken");
+    const response = await fetch("/api/organizations", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: accessToken ? `Bearer ${accessToken}` : "",
+      },
+      body: JSON.stringify(data),
+    });
+    const responseData = await response.json();
+    if (!response.ok) {
+      throw new Error(
+        (responseData as ApiErrorResponse).error ||
+          "Error al actualizar la organización"
+      );
+    }
+    return responseData as { organization: any };
+  },
+
+  async deleteOrganization(id: string): Promise<{ success: boolean }> {
+    const accessToken = Cookies.get("finanz_accessToken");
+    const response = await fetch("/api/organizations", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: accessToken ? `Bearer ${accessToken}` : "",
+      },
+      body: JSON.stringify({ id }),
+    });
+    const responseData = await response.json();
+    if (!response.ok) {
+      throw new Error(
+        (responseData as ApiErrorResponse).error ||
+          "Error al eliminar la organización"
+      );
+    }
+    return responseData as { success: boolean };
+  },
+
+  async addMember(slug: string, data: { nombre: string; apellido: string }) {
+    const accessToken = Cookies.get("finanz_accessToken");
+    const response = await fetch(`/api/organizations/${slug}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: accessToken ? `Bearer ${accessToken}` : "",
+      },
+      body: JSON.stringify({ ...data, payments: [] }),
+    });
+    const responseData = await response.json();
+    if (!response.ok) {
+      throw new Error(responseData.error || "Error al añadir miembro");
+    }
+    return responseData;
+  },
+
+  async updateMember(
+    slug: string,
+    index: number,
+    data: { nombre: string; apellido: string; payments?: any[] }
+  ) {
+    const accessToken = Cookies.get("finanz_accessToken");
+    const response = await fetch(`/api/organizations/${slug}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: accessToken ? `Bearer ${accessToken}` : "",
+      },
+      body: JSON.stringify({ index, ...data }),
+    });
+    const responseData = await response.json();
+    if (!response.ok) {
+      throw new Error(responseData.error || "Error al actualizar miembro");
+    }
+    return responseData;
+  },
+
+  async deleteMember(slug: string, index: number) {
+    const accessToken = Cookies.get("finanz_accessToken");
+    const response = await fetch(`/api/organizations/${slug}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: accessToken ? `Bearer ${accessToken}` : "",
+      },
+      body: JSON.stringify({ index }),
+    });
+    const responseData = await response.json();
+    if (!response.ok) {
+      throw new Error(responseData.error || "Error al eliminar miembro");
+    }
+    return responseData;
+  },
+
+  async getOrganizationMembers(slug: string) {
+    const accessToken = Cookies.get("finanz_accessToken");
+    const response = await fetch(`/api/organizations/${slug}/members`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: accessToken ? `Bearer ${accessToken}` : "",
+      },
+    });
+    const responseData = await response.json();
+    if (!response.ok) {
+      throw new Error(responseData.error || "Error al obtener miembros");
+    }
+    return responseData;
   },
 };

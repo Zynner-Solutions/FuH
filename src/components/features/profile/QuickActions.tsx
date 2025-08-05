@@ -67,6 +67,8 @@ export default function QuickActions({ expenses, onJarCreated }: Props) {
                   detail: { editMode: true },
                 });
                 window.dispatchEvent(event);
+              } else if (action.label === "Organizaciones") {
+                router.push("/organizations");
               } else if (action.label === "Frascos" && action.onClick) {
                 action.onClick();
               }

@@ -42,6 +42,7 @@ export default function QuickActions({ expenses, onJarCreated }: Props) {
       label: "Exportar datos",
       icon: <Download className="w-5 h-5" />,
       description: `Descarga tus datos financieros. Gastos registrados: ${expenseCount}`,
+      semiDisabled: true,
     },
     {
       label: "Frascos",
@@ -60,6 +61,7 @@ export default function QuickActions({ expenses, onJarCreated }: Props) {
           <button
             key={action.label}
             onClick={() => {
+              if (action.semiDisabled) return;
               if (action.label === "Configuración") {
                 const event = new CustomEvent("toggleEditMode", {
                   detail: { editMode: true },
@@ -69,7 +71,10 @@ export default function QuickActions({ expenses, onJarCreated }: Props) {
                 action.onClick();
               }
             }}
-            className="flex items-center p-4 border border-gray-200 rounded-lg hover:border-purple-300 hover:shadow-sm transition-all text-left"
+            className={`flex items-center p-4 border border-gray-200 rounded-lg hover:border-purple-300 hover:shadow-sm transition-all text-left ${
+              action.semiDisabled ? "opacity-60 cursor-not-allowed" : ""
+            }`}
+            tabIndex={action.semiDisabled ? -1 : 0}
           >
             <div className="rounded-full p-2 bg-purple-100 text-purple-600 mr-4">
               {action.icon}

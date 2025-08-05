@@ -59,6 +59,7 @@ export interface ProfileUpdateData {
   alias?: string;
   password?: string;
   avatarUrl?: string;
+  deleteJar?: string;
 }
 
 export interface ProfileUpdateResponse {

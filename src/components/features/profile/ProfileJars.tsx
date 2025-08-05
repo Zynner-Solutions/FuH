@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, forwardRef, useImperativeHandle } from "react";
+import { useNotification } from "@/components/ui/notifications/useNotification";
 import { ApiClient } from "@/lib/api/ApiClient";
 import type { Jar } from "@/lib/types";
 import {
@@ -10,6 +11,7 @@ import {
   Calendar,
   Sparkles,
   Pencil,
+  X,
 } from "lucide-react";
 import Modal from "@/components/ui/modal/Modal";
 
@@ -20,6 +22,14 @@ const ProfileJars = forwardRef<{ fetchJars: () => void }>((props, ref) => {
   const [editValue, setEditValue] = useState("");
   const [editType, setEditType] = useState<"add" | "remove">("add");
   const [error, setError] = useState("");
+  const [page, setPage] = useState(1);
+  const jarsPerPage = 6;
+  const totalPages = Math.ceil(jars.length / jarsPerPage);
+  const paginatedJars = jars.slice(
+    (page - 1) * jarsPerPage,
+    page * jarsPerPage
+  );
+  const { confirm, success, error: notifyError } = useNotification();
 
   const fetchJars = async () => {
     const data = await ApiClient.getProfile();
@@ -66,7 +76,7 @@ const ProfileJars = forwardRef<{ fetchJars: () => void }>((props, ref) => {
   return (
     <div className="w-full max-w-7xl mx-auto px-2 sm:px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {jars.map((jar) => {
+        {paginatedJars.map((jar) => {
           const progress = Math.min(100, (jar.saved / jar.target) * 100);
           const isCompleted = jar.isCompleted || progress >= 100;
           const isEditing = editId === jar.id;
@@ -79,6 +89,37 @@ const ProfileJars = forwardRef<{ fetchJars: () => void }>((props, ref) => {
                 minHeight: "380px",
               }}
             >
+              <button
+                className={`absolute -top-2 -left-2 w-8 h-8 flex items-center justify-center rounded-full z-10 transition-all duration-200 border-2 border-violet-200 shadow-md ${
+                  isCompleted
+                    ? "opacity-40 cursor-not-allowed pointer-events-none bg-violet-100 border-violet-100"
+                    : "bg-gradient-to-br from-violet-100 to-purple-200 hover:from-violet-500 hover:to-purple-600 text-violet-700 hover:text-white"
+                }`}
+                disabled={isCompleted}
+                onClick={() => {
+                  if (isCompleted) return;
+                  confirm(
+                    `¿Seguro que quieres eliminar el frasco "${jar.name}"?`,
+                    async () => {
+                      try {
+                        await ApiClient.updateProfile({ deleteJar: jar.id });
+                        await fetchJars();
+                        success("Frasco eliminado correctamente");
+                      } catch (e) {
+                        notifyError("Error al eliminar el frasco");
+                      }
+                    }
+                  );
+                }}
+                type="button"
+                aria-label="Eliminar frasco"
+              >
+                <X
+                  className={`w-4 h-4 transition-colors duration-200 ${
+                    isCompleted ? "text-violet-300" : "group-hover:text-white"
+                  }`}
+                />
+              </button>
               {isCompleted && (
                 <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-emerald-500 to-green-600 rounded-full flex items-center justify-center shadow-lg">
                   <Sparkles className="w-4 h-4 text-white" />
@@ -86,17 +127,32 @@ const ProfileJars = forwardRef<{ fetchJars: () => void }>((props, ref) => {
               )}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-lg font-bold text-gray-900 truncate group-hover:text-violet-700 transition-colors flex items-center">
+                  <h3
+                    className={`text-lg font-bold text-gray-900 truncate flex items-center ${
+                      isCompleted
+                        ? ""
+                        : "group-hover:text-violet-700 transition-colors"
+                    }`}
+                  >
                     {jar.name}
                     <button
-                      className="ml-2 p-1 rounded hover:bg-violet-100 text-violet-600"
-                      onClick={() => {
-                        setEditId(jar.id);
-                        setEditValue("");
-                        setEditType("add");
-                        setError("");
-                      }}
+                      className={`ml-2 p-1 rounded ${
+                        isCompleted
+                          ? "opacity-50 cursor-not-allowed pointer-events-none"
+                          : "hover:bg-violet-100 text-violet-600"
+                      }`}
+                      onClick={
+                        isCompleted
+                          ? undefined
+                          : () => {
+                              setEditId(jar.id);
+                              setEditValue("");
+                              setEditType("add");
+                              setError("");
+                            }
+                      }
                       type="button"
+                      disabled={isCompleted}
                     >
                       <Pencil className="w-4 h-4" />
                     </button>
@@ -182,7 +238,6 @@ const ProfileJars = forwardRef<{ fetchJars: () => void }>((props, ref) => {
                       </h4>
                       <p className="text-violet-500 text-sm">{jar.name}</p>
                     </div>
-
                     <div className="flex gap-3">
                       <button
                         className={`flex-1 px-4 py-3 rounded-xl font-semibold border-2 transition-all duration-200 ${
@@ -207,7 +262,6 @@ const ProfileJars = forwardRef<{ fetchJars: () => void }>((props, ref) => {
                         💸 Quitar
                       </button>
                     </div>
-
                     <div className="relative">
                       <input
                         type="number"
@@ -225,13 +279,11 @@ const ProfileJars = forwardRef<{ fetchJars: () => void }>((props, ref) => {
                         $
                       </div>
                     </div>
-
                     {error && (
                       <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-red-600 text-sm text-center font-medium">
                         {error}
                       </div>
                     )}
-
                     <div className="flex gap-3 pt-2">
                       <button
                         className="flex-1 px-6 py-3 rounded-xl bg-white/70 border border-gray-200 text-gray-700 font-semibold hover:bg-gray-50 transition-all duration-200"
@@ -277,6 +329,37 @@ const ProfileJars = forwardRef<{ fetchJars: () => void }>((props, ref) => {
           );
         })}
       </div>
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center mt-8 gap-2">
+          <button
+            className="px-3 py-2 rounded-lg border border-gray-200 bg-white text-gray-700 font-semibold disabled:opacity-50"
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+          >
+            Anterior
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i + 1}
+              className={`px-3 py-2 rounded-lg font-semibold border ${
+                page === i + 1
+                  ? "bg-violet-600 text-white border-violet-600"
+                  : "bg-white text-gray-700 border-gray-200 hover:bg-violet-50"
+              }`}
+              onClick={() => setPage(i + 1)}
+            >
+              {i + 1}
+            </button>
+          ))}
+          <button
+            className="px-3 py-2 rounded-lg border border-gray-200 bg-white text-gray-700 font-semibold disabled:opacity-50"
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+          >
+            Siguiente
+          </button>
+        </div>
+      )}
     </div>
   );
 });

@@ -54,6 +54,15 @@ export async function GET(request: NextRequest) {
     if (!user.jars) {
       user.jars = [];
     }
+    user.jars = user.jars.map((jar: any) => {
+      if (typeof jar.saved === "number" && typeof jar.target === "number") {
+        return {
+          ...jar,
+          isCompleted: jar.saved >= jar.target ? true : !!jar.isCompleted,
+        };
+      }
+      return jar;
+    });
 
     const { data: expenses } = await supabase
       .from("expenses")
@@ -108,10 +117,22 @@ export async function PATCH(request: NextRequest) {
 
     const userId = decodedToken.id;
     const requestData = await request.json();
-    const { alias, password, avatarUrl, addJar, updateJar } = requestData;
 
+    const { alias, password, avatarUrl, addJar, updateJar, deleteJar } =
+      requestData;
     const updates: Record<string, any> = {};
     const authUpdates: Record<string, any> = {};
+
+    if (deleteJar && typeof deleteJar === "string") {
+      const { data: user } = await supabase
+        .from("users")
+        .select("jars")
+        .eq("id", userId)
+        .single();
+      let jars = Array.isArray(user?.jars) ? user.jars : [];
+      jars = jars.filter((jar: any) => jar.id !== deleteJar);
+      updates.jars = jars;
+    }
 
     if (alias) {
       updates.alias = alias;
@@ -128,7 +149,15 @@ export async function PATCH(request: NextRequest) {
         .eq("id", userId)
         .single();
       let jars = Array.isArray(user?.jars) ? user.jars : [];
-      jars = [...jars, addJar];
+      // Normalizar isCompleted
+      const normalizedAddJar = {
+        ...addJar,
+        isCompleted:
+          typeof addJar.saved === "number" && typeof addJar.target === "number"
+            ? addJar.saved >= addJar.target
+            : !!addJar.isCompleted,
+      };
+      jars = [...jars, normalizedAddJar];
       updates.jars = jars;
     }
 
@@ -139,7 +168,18 @@ export async function PATCH(request: NextRequest) {
         .eq("id", userId)
         .single();
       let jars = Array.isArray(user?.jars) ? user.jars : [];
-      jars = jars.map((jar) => (jar.id === updateJar.id ? updateJar : jar));
+      // Normalizar isCompleted en update
+      const normalizedUpdateJar = {
+        ...updateJar,
+        isCompleted:
+          typeof updateJar.saved === "number" &&
+          typeof updateJar.target === "number"
+            ? updateJar.saved >= updateJar.target
+            : !!updateJar.isCompleted,
+      };
+      jars = jars.map((jar) =>
+        jar.id === updateJar.id ? normalizedUpdateJar : jar
+      );
       updates.jars = jars;
     }
 

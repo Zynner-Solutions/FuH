@@ -44,7 +44,6 @@ export default function ProfileInfo({ user }: Props) {
       }
       if (Object.keys(updateData).length > 0) {
         const response = await ApiClient.updateProfile(updateData);
-        // setUser(response.user); // Eliminar porque setUser no está definido ni es necesario aquí
       }
       setEditMode(false);
       setPassword("");

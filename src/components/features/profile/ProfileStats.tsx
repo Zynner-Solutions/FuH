@@ -1,11 +1,12 @@
 "use client";
 
-import { Expense } from "@/lib/types";
-type Props = { expenses: Expense[] };
-export default function ProfileStats({ expenses }: Props) {
+import { Expense, Jar } from "@/lib/types";
+type Props = { expenses: Expense[]; jars?: Jar[] };
+export default function ProfileStats({ expenses, jars = [] }: Props) {
   let expenseCount = expenses.length;
   let mostUsedCategory = "-";
   let daysOfUse = 0;
+  let completedGoals = 0;
   if (expenses.length > 0) {
     const categoryCount: Record<string, number> = {};
     expenses.forEach((e: Expense) => {
@@ -28,6 +29,22 @@ export default function ProfileStats({ expenses }: Props) {
       Math.ceil((last - first) / (1000 * 60 * 60 * 24)) + 1
     );
   }
+
+  if (Array.isArray(jars) && jars.length > 0) {
+    completedGoals = jars.reduce(
+      (acc, jar) =>
+        acc +
+        ((typeof jar.saved === "number" &&
+          typeof jar.target === "number" &&
+          jar.saved >= jar.target) ||
+        jar.isCompleted === true
+          ? 1
+          : 0),
+      0
+    );
+  } else {
+    completedGoals = 0;
+  }
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-4 mb-8">
       <div className="border border-gray-200 rounded-lg p-4 text-center shadow-sm">
@@ -49,7 +66,9 @@ export default function ProfileStats({ expenses }: Props) {
         <p className="text-gray-600 text-sm mt-1">Días de uso</p>
       </div>
       <div className="border border-gray-200 rounded-lg p-4 text-center shadow-sm">
-        <p className="text-2xl md:text-3xl font-bold text-purple-600">3</p>
+        <p className="text-2xl md:text-3xl font-bold text-purple-600">
+          {completedGoals}
+        </p>
         <p className="text-gray-600 text-sm mt-1">Metas cumplidas</p>
       </div>
     </div>

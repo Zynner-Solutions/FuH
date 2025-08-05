@@ -5,6 +5,7 @@ import * as yup from "yup";
 import type { Jar } from "@/lib/types";
 import { useState } from "react";
 import { useNotification } from "@/components/ui/notifications/useNotification";
+import { ApiClient } from "@/lib/api/ApiClient";
 import {
   PiggyBank,
   Target,
@@ -81,13 +82,7 @@ export default function JarForm({ onSuccess }: { onSuccess?: () => void }) {
                 createdAt: new Date().toISOString(),
                 updatedAt: undefined,
               };
-              const res = await fetch("/api/me", {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ addJar: newJar }),
-                credentials: "include",
-              });
-              if (!res.ok) throw new Error();
+              await ApiClient.addJar(newJar);
               success("¡Frasco creado exitosamente!");
               resetForm();
               if (onSuccess) onSuccess();

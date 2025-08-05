@@ -209,4 +209,53 @@ export const ApiClient = {
 
     return responseData as { message: string };
   },
+
+  async updateJar(jar: Jar): Promise<{ user: UserProfile }> {
+    const accessToken = Cookies.get("finanz_accessToken");
+
+    const response = await fetch("/api/me", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: accessToken ? `Bearer ${accessToken}` : "",
+      },
+      body: JSON.stringify({ updateJar: jar }),
+      credentials: "include",
+    });
+
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        (responseData as ApiErrorResponse).error ||
+          "Error al actualizar el frasco"
+      );
+    }
+
+    return responseData as { user: UserProfile };
+  },
+
+  async addJar(jar: Jar): Promise<{ user: UserProfile }> {
+    const accessToken = Cookies.get("finanz_accessToken");
+
+    const response = await fetch("/api/me", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: accessToken ? `Bearer ${accessToken}` : "",
+      },
+      body: JSON.stringify({ addJar: jar }),
+      credentials: "include",
+    });
+
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        (responseData as ApiErrorResponse).error || "Error al crear el frasco"
+      );
+    }
+
+    return responseData as { user: UserProfile };
+  },
 };

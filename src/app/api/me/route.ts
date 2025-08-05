@@ -108,7 +108,7 @@ export async function PATCH(request: NextRequest) {
 
     const userId = decodedToken.id;
     const requestData = await request.json();
-    const { alias, password, avatarUrl, addJar } = requestData;
+    const { alias, password, avatarUrl, addJar, updateJar } = requestData;
 
     const updates: Record<string, any> = {};
     const authUpdates: Record<string, any> = {};
@@ -129,6 +129,17 @@ export async function PATCH(request: NextRequest) {
         .single();
       let jars = Array.isArray(user?.jars) ? user.jars : [];
       jars = [...jars, addJar];
+      updates.jars = jars;
+    }
+
+    if (updateJar) {
+      const { data: user } = await supabase
+        .from("users")
+        .select("jars")
+        .eq("id", userId)
+        .single();
+      let jars = Array.isArray(user?.jars) ? user.jars : [];
+      jars = jars.map((jar) => (jar.id === updateJar.id ? updateJar : jar));
       updates.jars = jars;
     }
 

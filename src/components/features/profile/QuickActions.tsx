@@ -6,8 +6,11 @@ import { useRouter } from "next/navigation";
 import { Expense } from "@/lib/types";
 import { useState } from "react";
 import JarForm from "@/components/forms/JarForm";
-type Props = { expenses: Expense[] };
-export default function QuickActions({ expenses }: Props) {
+type Props = {
+  expenses: Expense[];
+  onJarCreated?: () => void;
+};
+export default function QuickActions({ expenses, onJarCreated }: Props) {
   const router = useRouter();
   const expenseCount = expenses.length;
   let mostUsedCategory = "-";
@@ -80,7 +83,12 @@ export default function QuickActions({ expenses }: Props) {
         {showJarForm && (
           <div className="col-span-1 sm:col-span-2 w-full mt-2">
             <div className="w-full max-w-2xl mx-auto">
-              <JarForm onSuccess={() => setShowJarForm(false)} />
+              <JarForm
+                onSuccess={() => {
+                  setShowJarForm(false);
+                  if (onJarCreated) onJarCreated();
+                }}
+              />
             </div>
           </div>
         )}

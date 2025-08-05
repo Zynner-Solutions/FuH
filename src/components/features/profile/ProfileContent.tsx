@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 import { ApiClient } from "@/lib/api/ApiClient";
@@ -16,18 +16,26 @@ export default function ProfileContent() {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const router = useRouter();
+  const profileJarsRef = useRef<{ fetchJars: () => void } | null>(null);
+
+  const fetchProfile = async () => {
+    const data = await ApiClient.getProfile();
+    if (!data) {
+      router.push("/login");
+      return;
+    }
+    setUser(data.user);
+    setExpenses(data.expenses);
+    setLoading(false);
+  };
+
+  const handleJarCreated = () => {
+    if (profileJarsRef.current) {
+      profileJarsRef.current.fetchJars();
+    }
+  };
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      const data = await ApiClient.getProfile();
-      if (!data) {
-        router.push("/login");
-        return;
-      }
-      setUser(data.user);
-      setExpenses(data.expenses);
-      setLoading(false);
-    };
     fetchProfile();
   }, [router]);
 
@@ -49,12 +57,12 @@ export default function ProfileContent() {
       <ProfileHeader user={user} />
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="order-1 lg:order-2 w-full lg:col-span-1">
-          <QuickActions expenses={expenses} />
+          <QuickActions expenses={expenses} onJarCreated={handleJarCreated} />
         </div>
         <div className="order-2 lg:order-1 lg:col-span-2 space-y-6">
           <ProfileStats expenses={expenses} />
           <ProfileInfo user={user} />
-          <ProfileJars />
+          <ProfileJars ref={profileJarsRef} />
         </div>
       </div>
     </div>

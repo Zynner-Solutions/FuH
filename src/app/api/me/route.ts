@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
 
     const { data: user } = await supabase
       .from("users")
-      .select("id, email, name, surname, alias, avatar_url, created_at")
+      .select("id, email, name, surname, alias, avatar_url, created_at, jars")
       .eq("id", userId)
       .single();
 
@@ -50,6 +50,9 @@ export async function GET(request: NextRequest) {
         { error: "Usuario no encontrado" },
         { status: 404 }
       );
+    }
+    if (!user.jars) {
+      user.jars = [];
     }
 
     const { data: expenses } = await supabase
@@ -105,7 +108,7 @@ export async function PATCH(request: NextRequest) {
 
     const userId = decodedToken.id;
     const requestData = await request.json();
-    const { alias, password, avatarUrl } = requestData;
+    const { alias, password, avatarUrl, addJar } = requestData;
 
     const updates: Record<string, any> = {};
     const authUpdates: Record<string, any> = {};
@@ -116,6 +119,17 @@ export async function PATCH(request: NextRequest) {
 
     if (avatarUrl) {
       updates.avatar_url = avatarUrl;
+    }
+
+    if (addJar) {
+      const { data: user } = await supabase
+        .from("users")
+        .select("jars")
+        .eq("id", userId)
+        .single();
+      let jars = Array.isArray(user?.jars) ? user.jars : [];
+      jars = [...jars, addJar];
+      updates.jars = jars;
     }
 
     if (password) {
@@ -159,7 +173,7 @@ export async function PATCH(request: NextRequest) {
 
     const { data: updatedUser } = await supabase
       .from("users")
-      .select("id, email, name, surname, alias, avatar_url, created_at")
+      .select("id, email, name, surname, alias, avatar_url, created_at, jars")
       .eq("id", userId)
       .single();
 

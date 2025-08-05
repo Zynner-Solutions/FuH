@@ -11,6 +11,7 @@ import {
   ExpensesListResponse,
   UserProfile,
   Expense,
+  Jar,
 } from "../types";
 import Cookies from "js-cookie";
 

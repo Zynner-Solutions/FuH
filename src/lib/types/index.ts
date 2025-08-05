@@ -52,6 +52,7 @@ export interface UserProfile {
   alias: string;
   avatar_url: string | null;
   created_at: string;
+  jars: Jar[];
 }
 
 export interface ProfileUpdateData {
@@ -94,4 +95,14 @@ export interface ExpenseResponse {
 
 export interface ExpensesListResponse {
   expenses: Expense[];
+}
+export interface Jar {
+  id: string;
+  name: string;
+  description?: string;
+  target: number;
+  saved: number;
+  isCompleted: boolean;
+  createdAt: string;
+  updatedAt?: string;
 }

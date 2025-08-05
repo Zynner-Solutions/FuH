@@ -8,6 +8,7 @@ import ProfileHeader from "./ProfileHeader";
 import ProfileStats from "./ProfileStats";
 import ProfileInfo from "./ProfileInfo";
 import QuickActions from "./QuickActions";
+import ProfileJars from "./ProfileJars";
 
 import { UserProfile, Expense } from "@/lib/types";
 export default function ProfileContent() {
@@ -50,6 +51,7 @@ export default function ProfileContent() {
         <div className="lg:col-span-2 space-y-6">
           <ProfileStats expenses={expenses} />
           <ProfileInfo user={user} />
+          <ProfileJars />
         </div>
         <div>
           <QuickActions expenses={expenses} />

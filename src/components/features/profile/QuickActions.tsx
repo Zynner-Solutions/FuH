@@ -4,6 +4,8 @@ import { Settings, Download, Bell, Building } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { Expense } from "@/lib/types";
+import { useState } from "react";
+import JarForm from "@/components/forms/JarForm";
 type Props = { expenses: Expense[] };
 export default function QuickActions({ expenses }: Props) {
   const router = useRouter();
@@ -21,6 +23,7 @@ export default function QuickActions({ expenses }: Props) {
       mostUsedCategory = sortedCategories[0][0];
     }
   }
+  const [showJarForm, setShowJarForm] = useState(false);
   const actions = [
     {
       label: "Configuración",
@@ -38,9 +41,10 @@ export default function QuickActions({ expenses }: Props) {
       description: `Descarga tus datos financieros. Gastos registrados: ${expenseCount}`,
     },
     {
-      label: "Notificaciones",
+      label: "Frascos",
       icon: <Bell className="w-5 h-5" />,
-      description: `Categoría más usada: ${mostUsedCategory}`,
+      description: `Crea y gestiona tus frascos de ahorro`,
+      onClick: () => setShowJarForm((v) => !v),
     },
   ];
   return (
@@ -58,6 +62,8 @@ export default function QuickActions({ expenses }: Props) {
                   detail: { editMode: true },
                 });
                 window.dispatchEvent(event);
+              } else if (action.label === "Frascos" && action.onClick) {
+                action.onClick();
               }
             }}
             className="flex items-center p-4 border border-gray-200 rounded-lg hover:border-purple-300 hover:shadow-sm transition-all text-left"
@@ -71,6 +77,11 @@ export default function QuickActions({ expenses }: Props) {
             </div>
           </button>
         ))}
+        {showJarForm && (
+          <div className="col-span-2 mt-2">
+            <JarForm onSuccess={() => setShowJarForm(false)} />
+          </div>
+        )}
       </div>
     </div>
   );
